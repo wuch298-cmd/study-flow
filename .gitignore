@@ -30,3 +30,6 @@ out/
 
 # Maven
 target/
+
+# Local database configuration
+src/main/resources/application-local.properties
