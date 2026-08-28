@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>任务列表 - StudyFlow</title>
+</head>
+
+<body>
+
+<h1>任务列表</h1>
+
+<form method="get" action="/tasks">
+    <label for="status">状态：</label>
+
+    <select id="status" name="status">
+        <option value="">全部</option>
+
+        <option
+                th:each="status : ${statuses}"
+                th:value="${status}"
+                th:text="${status}"
+                th:selected="${status == selectedStatus}">
+        </option>
+    </select>
+
+    <button type="submit">筛选</button>
+</form>
+
+<hr>
+
+<ul>
+    <li th:each="task : ${tasks}">
+        <strong th:text="${task.title}">任务标题</strong>
+        -
+        <span th:text="${task.status}">状态</span>
+    </li>
+</ul>
+
+<p th:if="${#lists.isEmpty(tasks)}">
+    暂无任务
+</p>
+
+</body>
+</html>

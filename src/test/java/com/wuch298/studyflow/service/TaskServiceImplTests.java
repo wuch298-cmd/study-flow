@@ -28,4 +28,14 @@ class TaskServiceImplTests {
         taskService.findTasks(TaskStatus.TODO);
         verify(taskRepository).findByStatus(TaskStatus.TODO);
     }
+    @Test
+    void saveShouldCallRepositorySave() {
+        TaskService taskService = new TaskServiceImpl(taskRepository);
+
+        Task task = new Task();
+
+        taskService.save(task);
+
+        verify(taskRepository).save(task);
+    }
 }

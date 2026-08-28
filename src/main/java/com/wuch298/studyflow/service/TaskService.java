@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface TaskService {
     List<Task> findTasks(TaskStatus status);
+    Task save(Task task);
 }

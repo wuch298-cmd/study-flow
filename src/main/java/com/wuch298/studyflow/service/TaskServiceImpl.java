@@ -22,4 +22,8 @@ public class TaskServiceImpl implements TaskService {
         else
             return taskRepository.findByStatus(status);
     }
+    @Override
+    public Task save(Task task){
+        return taskRepository.save(task);
+    }
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新增任务 - StudyFlow</title>
+</head>
+
+<body>
+
+<h1>新增任务</h1>
+
+<form th:object="${task}" method="post" action="/tasks">
+
+    <div>
+        <label for="title">标题：</label>
+        <input id="title" type="text" th:field="*{title}">
+    </div>
+
+    <div>
+        <label for="description">描述：</label>
+        <textarea id="description" th:field="*{description}"></textarea>
+    </div>
+
+    <div>
+        <label for="priority">优先级：</label>
+        <select id="priority" th:field="*{priority}">
+            <option
+                    th:each="priority : ${priorities}"
+                    th:value="${priority}"
+                    th:text="${priority}">
+            </option>
+        </select>
+    </div>
+
+    <div>
+        <label for="deadline">截止日期：</label>
+        <input id="deadline" type="date" th:field="*{deadline}">
+    </div>
+
+    <button type="submit">保存任务</button>
+</form>
+
+</body>
+</html>
