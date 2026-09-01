@@ -6,6 +6,7 @@ import com.wuch298.studyflow.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -25,5 +26,17 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task save(Task task){
         return taskRepository.save(task);
+    }
+    @Override
+    public Task findById(Long id){
+        Optional<Task> task = taskRepository.findById(id);
+        if(task.isPresent()){
+            return task.get();
+        }
+        throw new RuntimeException("Task not found");
+    }
+    @Override
+    public void deleteById(Long id){
+        taskRepository.deleteById(id);
     }
 }

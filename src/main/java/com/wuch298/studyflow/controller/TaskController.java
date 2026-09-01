@@ -6,10 +6,7 @@ import com.wuch298.studyflow.entity.task.TaskStatus;
 import com.wuch298.studyflow.service.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,6 +37,35 @@ public class TaskController {
     public String createTask(@ModelAttribute Task task) {
         taskService.save(task);
 
+        return "redirect:/tasks";
+    }
+    @GetMapping("/tasks/{id}/edit")
+    public String showEditForm(@PathVariable long id, Model model)//URL路径所以是PathVariable
+    {
+        Task task = taskService.findById(id);
+        model.addAttribute("task", task);
+        model.addAttribute("priorities", TaskPriority.values());
+        model.addAttribute("statuses", TaskStatus.values());
+
+        return "tasks/form.html";
+    }
+    @PostMapping("/tasks/{id}")
+    public String updateTask(@PathVariable long id, @ModelAttribute Task task) {
+        Task existingTask = taskService.findById(id);
+
+        existingTask.setTitle(task.getTitle());
+        existingTask.setDescription(task.getDescription());
+        existingTask.setPriority(task.getPriority());
+        existingTask.setDeadline(task.getDeadline());
+        existingTask.setStatus(task.getStatus());
+
+        taskService.save(existingTask);
+
+        return "redirect:/tasks";
+    }
+    @PostMapping("/tasks/{id}/delete")
+    public String deleteTask(@PathVariable long id) {
+        taskService.deleteById(id);
         return "redirect:/tasks";
     }
 }

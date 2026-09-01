@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>任务列表 - StudyFlow</title>
@@ -28,13 +29,36 @@
 
 <hr>
 
+<a href="/tasks/new">新增任务</a>
+
+<hr>
+
 <ul>
     <li th:each="task : ${tasks}">
         <strong th:text="${task.title}">任务标题</strong>
+
         -
         <span th:text="${task.status}">状态</span>
+
+        -
+        <span th:text="${task.priority}">优先级</span>
+
+        -
+
+        <a th:href="@{/tasks/{id}/edit(id=${task.id})}">
+            编辑
+        </a>
+
+        <form th:action="@{/tasks/{id}/delete(id=${task.id})}"
+              method="post"
+              style="display:inline">
+
+            <button type="submit">删除</button>
+        </form>
+
     </li>
 </ul>
+
 
 <p th:if="${#lists.isEmpty(tasks)}">
     暂无任务

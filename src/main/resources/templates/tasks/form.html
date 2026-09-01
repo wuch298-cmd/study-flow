@@ -1,44 +1,91 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <title>新增任务 - StudyFlow</title>
+    <title>任务表单 - StudyFlow</title>
 </head>
 
 <body>
 
-<h1>新增任务</h1>
+<h1 th:text="${task.id == null ? '新增任务' : '编辑任务'}">
+    任务
+</h1>
 
-<form th:object="${task}" method="post" action="/tasks">
+<form th:object="${task}"
+      method="post"
+      th:action="${task.id == null ? '/tasks' : '/tasks/' + task.id}">
 
     <div>
         <label for="title">标题：</label>
-        <input id="title" type="text" th:field="*{title}">
+
+        <input
+                id="title"
+                type="text"
+                th:field="*{title}">
     </div>
 
     <div>
         <label for="description">描述：</label>
-        <textarea id="description" th:field="*{description}"></textarea>
+
+        <textarea
+                id="description"
+                th:field="*{description}">
+        </textarea>
     </div>
 
     <div>
         <label for="priority">优先级：</label>
-        <select id="priority" th:field="*{priority}">
+
+        <select
+                id="priority"
+                th:field="*{priority}">
+
             <option
                     th:each="priority : ${priorities}"
                     th:value="${priority}"
                     th:text="${priority}">
             </option>
+
         </select>
     </div>
 
     <div>
         <label for="deadline">截止日期：</label>
-        <input id="deadline" type="date" th:field="*{deadline}">
+
+        <input
+                id="deadline"
+                type="date"
+                th:field="*{deadline}">
     </div>
 
-    <button type="submit">保存任务</button>
+    <div th:if="${task.id != null}">
+        <label for="status">状态：</label>
+
+        <select
+                id="status"
+                th:field="*{status}">
+
+            <option
+                    th:each="status : ${statuses}"
+                    th:value="${status}"
+                    th:text="${status}">
+            </option>
+
+        </select>
+    </div>
+
+    <button
+            type="submit"
+            th:text="${task.id == null ? '保存任务' : '保存修改'}">
+        保存
+    </button>
+
 </form>
+
+<p>
+    <a href="/tasks">返回任务列表</a>
+</p>
 
 </body>
 </html>

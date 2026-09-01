@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -54,7 +55,7 @@ class TaskControllerTests {
         assertThat(viewName).isEqualTo("tasks/list.html");
     }
     @Test
-    void showCreatFormShouldAddDataToModelAndReturnFormView()
+    void showCreatForm()
     {
         TaskController taskController = new TaskController(taskService);//为了调用showCreatForm验证返回名
         String viewName = taskController.showCreatForm(model);
@@ -70,6 +71,69 @@ class TaskControllerTests {
         Task task = new Task();
         String viewName = taskController.createTask(task);
         verify(taskService).save(task);
+        assertThat(viewName).isEqualTo("redirect:/tasks");
+    }
+    @Test
+    void showEditFormShouldAddDataToModelAndReturnFormView()
+    {
+        TaskController taskController = new TaskController(taskService);
+        Task task = new Task();
+        when(taskService.findById(1L)).thenReturn(task);
+        String viewName = taskController.showEditForm(1L,model);
+        verify(taskService).findById(1L);
+        verify(model).addAttribute("task",task);
+        verify(model).addAttribute("priorities", TaskPriority.values());
+        assertThat(viewName).isEqualTo("tasks/form.html");
+    }
+    @Test
+    void updateTaskShouldUpdateFieldsSaveAndRedirect() {
+        TaskController taskController =
+                new TaskController(taskService);
+
+        Task existingTask = new Task();
+        existingTask.setTitle("Old title");
+        existingTask.setStatus(TaskStatus.TODO);
+
+        Task submittedTask = new Task();
+        submittedTask.setTitle("New title");
+        submittedTask.setDescription("New description");
+        submittedTask.setPriority(TaskPriority.HIGH);
+        submittedTask.setDeadline(LocalDate.of(2026, 9, 10));
+        submittedTask.setStatus(TaskStatus.DONE);
+
+        when(taskService.findById(1L))
+                .thenReturn(existingTask);
+
+        String viewName =
+                taskController.updateTask(1L, submittedTask);
+
+        verify(taskService).findById(1L);
+        verify(taskService).save(existingTask);
+
+        assertThat(existingTask.getTitle())
+                .isEqualTo("New title");
+
+        assertThat(existingTask.getDescription())
+                .isEqualTo("New description");
+
+        assertThat(existingTask.getPriority())
+                .isEqualTo(TaskPriority.HIGH);
+
+        assertThat(existingTask.getDeadline())
+                .isEqualTo(LocalDate.of(2026, 9, 10));
+
+        assertThat(existingTask.getStatus())
+                .isEqualTo(TaskStatus.DONE);
+
+        assertThat(viewName)
+                .isEqualTo("redirect:/tasks");
+    }
+    @Test
+    void deleteTaskShouldDeleteTaskAndReturnView()
+    {
+        TaskController taskController = new TaskController(taskService);
+        String viewName = taskController.deleteTask(1L);
+        verify(taskService).deleteById(1L);
         assertThat(viewName).isEqualTo("redirect:/tasks");
     }
 }

@@ -9,8 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceImplTests {
@@ -37,5 +41,30 @@ class TaskServiceImplTests {
         taskService.save(task);
 
         verify(taskRepository).save(task);
+    }
+    @Test
+    void findByIdShouldReturnTask() {
+        TaskService taskService = new TaskServiceImpl(taskRepository);
+        Task task = new Task();
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+        Task result = taskService.findById(1L);
+        verify(taskRepository).findById(1L);
+        assertThat(result).isSameAs(task);
+    }
+    @Test
+    void findByIdShouldThrowExceptionWhenTaskNotFound() {
+        TaskService taskService = new TaskServiceImpl(taskRepository);
+        when(taskRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> taskService.findById(1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Task not found");
+
+        verify(taskRepository).findById(1L);
+    }
+    @Test
+    void deleteByIdShouldCallRepositoryDelete() {
+        TaskService taskService = new TaskServiceImpl(taskRepository);
+        taskService.deleteById(1L);
+        verify(taskRepository).deleteById(1L);
     }
 }
