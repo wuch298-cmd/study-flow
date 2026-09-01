@@ -3,89 +3,77 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>任务表单 - StudyFlow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${task.id == null ? '新增任务 - StudyFlow' : '编辑任务 - StudyFlow'}">任务表单 - StudyFlow</title>
+    <link rel="stylesheet" th:href="@{/css/task.css}">
 </head>
 
-<body>
+<body class="task-page">
+<main class="task-shell task-shell-narrow">
+    <header class="page-header form-page-header">
+        <div>
+            <p class="eyebrow">任务管理</p>
+            <h1 th:text="${task.id == null ? '新增任务' : '编辑任务'}">任务</h1>
+            <p class="page-description" th:text="${task.id == null ? '记录下一件要完成的事。' : '更新任务内容、优先级或完成进度。'}">填写任务信息</p>
+        </div>
+        <a class="text-link" href="/tasks">← 返回任务列表</a>
+    </header>
 
-<h1 th:text="${task.id == null ? '新增任务' : '编辑任务'}">
-    任务
-</h1>
+    <form class="task-form"
+          th:object="${task}"
+          method="post"
+          th:action="${task.id == null ? '/tasks' : '/tasks/' + task.id}">
 
-<form th:object="${task}"
-      method="post"
-      th:action="${task.id == null ? '/tasks' : '/tasks/' + task.id}">
+        <div class="field-group">
+            <label for="title">任务标题 <span class="required-mark">*</span></label>
+            <input id="title" type="text" th:field="*{title}" maxlength="100" required autofocus
+                   placeholder="例如：完成 Spring Boot 学习笔记">
+            <p class="field-help">最多 100 个字符。</p>
+        </div>
 
-    <div>
-        <label for="title">标题：</label>
+        <div class="field-group">
+            <label for="description">任务描述</label>
+            <textarea id="description" th:field="*{description}" maxlength="2000" rows="6"
+                      placeholder="补充任务目标、学习资料或完成标准（可选）"></textarea>
+            <p class="field-help">最多 2,000 个字符。</p>
+        </div>
 
-        <input
-                id="title"
-                type="text"
-                th:field="*{title}">
-    </div>
+        <div class="form-grid">
+            <div class="field-group">
+                <label for="priority">优先级</label>
+                <select id="priority" th:field="*{priority}">
+                    <option th:each="priority : ${priorities}"
+                            th:value="${priority}"
+                            th:text="${priority}">
+                    </option>
+                </select>
+            </div>
 
-    <div>
-        <label for="description">描述：</label>
+            <div class="field-group">
+                <label for="deadline">截止日期</label>
+                <input id="deadline" type="date" th:field="*{deadline}">
+            </div>
+        </div>
 
-        <textarea
-                id="description"
-                th:field="*{description}">
-        </textarea>
-    </div>
+        <div class="field-group" th:if="${task.id != null}">
+            <label for="status">当前状态</label>
+            <select id="status" th:field="*{status}">
+                <option th:each="status : ${statuses}"
+                        th:value="${status}"
+                        th:text="${status}">
+                </option>
+            </select>
+        </div>
 
-    <div>
-        <label for="priority">优先级：</label>
-
-        <select
-                id="priority"
-                th:field="*{priority}">
-
-            <option
-                    th:each="priority : ${priorities}"
-                    th:value="${priority}"
-                    th:text="${priority}">
-            </option>
-
-        </select>
-    </div>
-
-    <div>
-        <label for="deadline">截止日期：</label>
-
-        <input
-                id="deadline"
-                type="date"
-                th:field="*{deadline}">
-    </div>
-
-    <div th:if="${task.id != null}">
-        <label for="status">状态：</label>
-
-        <select
-                id="status"
-                th:field="*{status}">
-
-            <option
-                    th:each="status : ${statuses}"
-                    th:value="${status}"
-                    th:text="${status}">
-            </option>
-
-        </select>
-    </div>
-
-    <button
-            type="submit"
-            th:text="${task.id == null ? '保存任务' : '保存修改'}">
-        保存
-    </button>
-
-</form>
-
-<p>
-    <a href="/tasks">返回任务列表</a>
-</p>
-
+        <div class="form-actions">
+            <button class="button button-primary"
+                    type="submit"
+                    th:text="${task.id == null ? '保存任务' : '保存修改'}">
+                保存
+            </button>
+            <a class="button button-secondary" href="/tasks">取消</a>
+        </div>
+    </form>
+</main>
 </body>
 </html>

@@ -3,66 +3,82 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>任务列表 - StudyFlow</title>
+    <link rel="stylesheet" th:href="@{/css/task.css}">
 </head>
 
-<body>
+<body class="task-page">
+<main class="task-shell">
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">StudyFlow</p>
+            <h1>任务列表</h1>
+            <p class="page-description">整理当下要做的事，专注完成每一个小目标。</p>
+        </div>
+        <a class="button button-primary" href="/tasks/new">+ 新增任务</a>
+    </header>
 
-<h1>任务列表</h1>
-
-<form method="get" action="/tasks">
-    <label for="status">状态：</label>
-
-    <select id="status" name="status">
-        <option value="">全部</option>
-
-        <option
-                th:each="status : ${statuses}"
-                th:value="${status}"
-                th:text="${status}"
-                th:selected="${status == selectedStatus}">
-        </option>
-    </select>
-
-    <button type="submit">筛选</button>
-</form>
-
-<hr>
-
-<a href="/tasks/new">新增任务</a>
-
-<hr>
-
-<ul>
-    <li th:each="task : ${tasks}">
-        <strong th:text="${task.title}">任务标题</strong>
-
-        -
-        <span th:text="${task.status}">状态</span>
-
-        -
-        <span th:text="${task.priority}">优先级</span>
-
-        -
-
-        <a th:href="@{/tasks/{id}/edit(id=${task.id})}">
-            编辑
-        </a>
-
-        <form th:action="@{/tasks/{id}/delete(id=${task.id})}"
-              method="post"
-              style="display:inline">
-
-            <button type="submit">删除</button>
+    <section class="filter-panel" aria-label="任务筛选">
+        <form method="get" action="/tasks" class="filter-form">
+            <div class="field-group field-group-inline">
+                <label for="status">按状态查看</label>
+                <select id="status" name="status">
+                    <option value="">全部任务</option>
+                    <option th:each="status : ${statuses}"
+                            th:value="${status}"
+                            th:text="${status}"
+                            th:selected="${status == selectedStatus}">
+                    </option>
+                </select>
+            </div>
+            <button class="button button-secondary" type="submit">应用筛选</button>
         </form>
+    </section>
 
-    </li>
-</ul>
+    <section class="task-grid" th:if="${not #lists.isEmpty(tasks)}" aria-label="任务列表">
+        <article class="task-card" th:each="task : ${tasks}">
+            <div class="task-card-header">
+                <h2 th:text="${task.title}">任务标题</h2>
+                <div class="badge-group" aria-label="任务状态和优先级">
+                    <span class="badge status-badge"
+                          th:classappend="${task.status.name() == 'TODO' ? ' status-todo' : (task.status.name() == 'IN_PROGRESS' ? ' status-progress' : ' status-done')}"
+                          th:text="${task.status}">状态</span>
+                    <span class="badge priority-badge"
+                          th:classappend="${task.priority.name() == 'LOW' ? ' priority-low' : (task.priority.name() == 'MEDIUM' ? ' priority-medium' : ' priority-high')}"
+                          th:text="${task.priority}">优先级</span>
+                </div>
+            </div>
 
+            <p class="task-description"
+               th:text="${task.description != null and !#strings.isEmpty(task.description) ? task.description : '暂无描述'}">
+                任务描述
+            </p>
 
-<p th:if="${#lists.isEmpty(tasks)}">
-    暂无任务
-</p>
+            <dl class="task-meta">
+                <div>
+                    <dt>截止日期</dt>
+                    <dd th:text="${task.deadline != null ? #temporals.format(task.deadline, 'yyyy-MM-dd') : '未设置'}">未设置</dd>
+                </div>
+            </dl>
 
+            <div class="task-actions">
+                <a class="button button-secondary" th:href="@{/tasks/{id}/edit(id=${task.id})}">编辑</a>
+                <form th:action="@{/tasks/{id}/delete(id=${task.id})}"
+                      method="post"
+                      onsubmit="return confirm('确定要删除这个任务吗？此操作无法撤销。');">
+                    <button class="button button-danger" type="submit">删除</button>
+                </form>
+            </div>
+        </article>
+    </section>
+
+    <section class="empty-state" th:if="${#lists.isEmpty(tasks)}">
+        <div class="empty-state-icon" aria-hidden="true">✓</div>
+        <h2>这里还没有任务</h2>
+        <p>从一个小任务开始，让学习计划更清晰。</p>
+        <a class="button button-primary" href="/tasks/new">新建第一个任务</a>
+    </section>
+</main>
 </body>
 </html>
