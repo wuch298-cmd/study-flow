@@ -2,6 +2,7 @@ package com.wuch298.studyflow.service;
 
 import com.wuch298.studyflow.entity.task.Task;
 import com.wuch298.studyflow.entity.task.TaskStatus;
+import com.wuch298.studyflow.exception.TaskNotFoundException;
 import com.wuch298.studyflow.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +30,7 @@ public class TaskServiceImpl implements TaskService {
     }
     @Override
     public Task findById(Long id){
-        Optional<Task> task = taskRepository.findById(id);
-        if(task.isPresent()){
-            return task.get();
-        }
-        throw new RuntimeException("Task not found");
+        return taskRepository.findById(id).orElseThrow(()->new TaskNotFoundException(id));
     }
     @Override
     public void deleteById(Long id){

@@ -26,8 +26,21 @@
 
         <div class="field-group">
             <label for="title">任务标题 <span class="required-mark">*</span></label>
-            <input id="title" type="text" th:field="*{title}" maxlength="100" required autofocus
+
+            <input id="title"
+                   type="text"
+                   th:field="*{title}"
+                   maxlength="100"
+                   required
+                   autofocus
                    placeholder="例如：完成 Spring Boot 学习笔记">
+
+            <p class="field-error"
+               th:if="${#fields.hasErrors('title')}"
+               th:errors="*{title}">
+                标题错误
+            </p>
+
             <p class="field-help">最多 100 个字符。</p>
         </div>
 

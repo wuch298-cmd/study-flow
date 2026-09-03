@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务不存在 - StudyFlow</title>
+
+    <link rel="stylesheet" th:href="@{/css/task.css}">
+</head>
+
+<body class="task-page">
+
+<main class="task-shell task-shell-narrow">
+
+    <section class="empty-state">
+
+        <p class="eyebrow">404</p>
+
+        <h1>任务不存在</h1>
+
+        <p th:text="${message}">
+            找不到指定的任务。
+        </p>
+
+        <a class="button button-primary"
+           href="/tasks">
+            返回任务列表
+        </a>
+
+    </section>
+
+</main>
+
+</body>
+</html>

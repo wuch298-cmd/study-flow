@@ -2,6 +2,7 @@ package com.wuch298.studyflow.service;
 
 import com.wuch298.studyflow.entity.task.Task;
 import com.wuch298.studyflow.entity.task.TaskStatus;
+import com.wuch298.studyflow.exception.TaskNotFoundException;
 import com.wuch298.studyflow.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,12 +53,16 @@ class TaskServiceImplTests {
         assertThat(result).isSameAs(task);
     }
     @Test
-    void findByIdShouldThrowExceptionWhenTaskNotFound() {
-        TaskService taskService = new TaskServiceImpl(taskRepository);
-        when(taskRepository.findById(1L)).thenReturn(Optional.empty());
+    void findByIdShouldThrowTaskNotFoundExceptionWhenTaskNotFound() {
+        TaskService taskService =
+                new TaskServiceImpl(taskRepository);
+
+        when(taskRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
         assertThatThrownBy(() -> taskService.findById(1L))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Task not found");
+                .isInstanceOf(TaskNotFoundException.class)
+                .hasMessage("Task not found: 1");
 
         verify(taskRepository).findById(1L);
     }

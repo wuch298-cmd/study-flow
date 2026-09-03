@@ -83,6 +83,17 @@ input:focus, textarea:focus, select:focus { border-color: var(--primary); box-sh
 .form-actions { justify-content: flex-end; gap: 10px; margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--border); }
 .text-link { color: var(--primary); font-weight: 700; text-decoration: none; }
 .text-link:hover { text-decoration: underline; }
+.home-header { margin-bottom: 24px; }
+.home-hero { padding: clamp(32px, 7vw, 68px); border: 1px solid var(--border); border-radius: 18px; background: radial-gradient(circle at top right, #e5ebff, var(--surface) 48%); box-shadow: var(--shadow); }
+.home-hero h2 { max-width: 640px; margin-bottom: 10px; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.25; }
+.home-hero > p:not(.eyebrow) { max-width: 570px; margin-bottom: 26px; color: var(--text-muted); font-size: 1.05rem; }
+.home-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.home-section { margin-top: 44px; }
+.home-section-heading { margin-bottom: 18px; }
+.home-section-heading h2 { font-size: 1.35rem; }
+.home-feature-card { min-height: 205px; }
+.home-feature-card .text-link { margin-top: auto; }
+.home-feature-icon { display: grid; width: 38px; height: 38px; margin-bottom: 16px; place-items: center; border-radius: 10px; color: var(--primary); background: #e5ebff; font-size: 1.2rem; font-weight: 800; }
 
 @media (max-width: 640px) {
     .task-shell { width: min(100% - 24px, 1120px); padding-top: 32px; }
@@ -93,4 +104,6 @@ input:focus, textarea:focus, select:focus { border-color: var(--primary); box-sh
     .filter-form .button, .page-header > .button, .form-actions .button { width: 100%; }
     .task-form { padding: 20px; }
     .form-actions { flex-direction: column-reverse; }
+    .home-actions { flex-direction: column; }
+    .home-actions .button { width: 100%; }
 }

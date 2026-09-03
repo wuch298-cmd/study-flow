@@ -11,21 +11,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class TaskControllerTests {
     @Mock
     private TaskService taskService;
     @Mock
     private Model model;
+    @Mock
+    private BindingResult bindingResult;
     @Test
     void listTasksWithoutStatusShouldFindAllTasks()
     {
@@ -52,7 +55,7 @@ class TaskControllerTests {
         verify(model).addAttribute("selectedStatus", null);
         verify(model).addAttribute("statuses", TaskStatus.values());
 
-        assertThat(viewName).isEqualTo("tasks/list.html");
+        assertThat(viewName).isEqualTo("tasks/list");
     }
     @Test
     void showCreatForm()
@@ -62,14 +65,15 @@ class TaskControllerTests {
         verify(model).addAttribute(eq("task"),any(Task.class));
         verify(model).addAttribute("priorities", TaskPriority.values());
 
-        assertThat(viewName).isEqualTo("tasks/form.html");
+        assertThat(viewName).isEqualTo("tasks/form");
     }
     @Test
     void createTaskShouldSaveTaskAndReturnView()
     {
         TaskController taskController = new TaskController(taskService);
         Task task = new Task();
-        String viewName = taskController.createTask(task);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        String viewName = taskController.createTask(task,bindingResult,model);
         verify(taskService).save(task);
         assertThat(viewName).isEqualTo("redirect:/tasks");
     }
@@ -83,7 +87,7 @@ class TaskControllerTests {
         verify(taskService).findById(1L);
         verify(model).addAttribute("task",task);
         verify(model).addAttribute("priorities", TaskPriority.values());
-        assertThat(viewName).isEqualTo("tasks/form.html");
+        assertThat(viewName).isEqualTo("tasks/form");
     }
     @Test
     void updateTaskShouldUpdateFieldsSaveAndRedirect() {
@@ -101,11 +105,17 @@ class TaskControllerTests {
         submittedTask.setDeadline(LocalDate.of(2026, 9, 10));
         submittedTask.setStatus(TaskStatus.DONE);
 
+        when(bindingResult.hasErrors()).thenReturn(false);
+
         when(taskService.findById(1L))
                 .thenReturn(existingTask);
 
-        String viewName =
-                taskController.updateTask(1L, submittedTask);
+        String viewName = taskController.updateTask(
+                1L,
+                submittedTask,
+                bindingResult,
+                model
+        );
 
         verify(taskService).findById(1L);
         verify(taskService).save(existingTask);
@@ -129,12 +139,64 @@ class TaskControllerTests {
                 .isEqualTo("redirect:/tasks");
     }
     @Test
+    void updateTaskWithValidationErrorsShouldReturnForm() {
+        TaskController taskController =
+                new TaskController(taskService);
+
+        Task submittedTask = new Task();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String viewName = taskController.updateTask(
+                1L,
+                submittedTask,
+                bindingResult,
+                model
+        );
+
+        verify(taskService, never()).findById(anyLong());
+        verify(taskService, never()).save(any());
+
+        verify(model).addAttribute(
+                "priorities",
+                TaskPriority.values()
+        );
+
+        verify(model).addAttribute(
+                "statuses",
+                TaskStatus.values()
+        );
+
+        assertThat(viewName)
+                .isEqualTo("tasks/form");
+    }
+    @Test
     void deleteTaskShouldDeleteTaskAndReturnView()
     {
         TaskController taskController = new TaskController(taskService);
         String viewName = taskController.deleteTask(1L);
         verify(taskService).deleteById(1L);
         assertThat(viewName).isEqualTo("redirect:/tasks");
+    }
+    @Test
+    void createTaskWithValidationErrorsShouldReturnForm() {
+        TaskController taskController =
+                new TaskController(taskService);
+
+        Task task = new Task();
+
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        String viewName =
+                taskController.createTask(task, bindingResult, model);
+
+        verify(taskService, never()).save(task);
+        verify(model).addAttribute(
+                "priorities",
+                TaskPriority.values());
+
+        assertThat(viewName)
+                .isEqualTo("tasks/form");
     }
 }
 

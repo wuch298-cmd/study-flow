@@ -1,17 +1,53 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyFlow</title>
+    <link rel="stylesheet" th:href="@{/css/task.css}">
 </head>
-<body>
-    <main>
-        <h1>StudyFlow</h1>
-        <p>管理你的学习项目、任务与笔记</p>
-        <button type="button" disabled>
-            查看任务（即将上线）
-        </button>
-    </main>
+<body class="task-page">
+<main class="task-shell">
+    <header class="page-header home-header">
+        <div>
+            <p class="eyebrow">StudyFlow</p>
+            <h1>让每一步学习更清晰</h1>
+            <p class="page-description">从整理任务开始，专注完成眼前最重要的一件事。</p>
+        </div>
+    </header>
+
+    <section class="home-hero" aria-labelledby="home-hero-title">
+        <p class="eyebrow">任务管理 V1</p>
+        <h2 id="home-hero-title">规划今天，完成今天</h2>
+        <p>查看现有任务、按状态筛选，或立即记录下一件要做的事。</p>
+        <div class="home-actions">
+            <a class="button button-primary" href="/tasks">查看任务</a>
+            <a class="button button-secondary" href="/tasks/new">新增任务</a>
+        </div>
+    </section>
+
+    <section class="home-section" aria-labelledby="home-features-title">
+        <div class="home-section-heading">
+            <p class="eyebrow">当前功能</p>
+            <h2 id="home-features-title">用简单的步骤保持学习节奏</h2>
+        </div>
+
+        <div class="task-grid">
+            <article class="task-card home-feature-card">
+                <div class="home-feature-icon" aria-hidden="true">✓</div>
+                <h3>集中查看任务</h3>
+                <p class="task-description">在一个页面查看任务标题、状态、优先级和截止日期。</p>
+                <a class="text-link" href="/tasks">进入任务列表 →</a>
+            </article>
+
+            <article class="task-card home-feature-card">
+                <div class="home-feature-icon" aria-hidden="true">+</div>
+                <h3>快速记录计划</h3>
+                <p class="task-description">创建任务，补充描述、优先级和截止日期，让计划可执行。</p>
+                <a class="text-link" href="/tasks/new">新增一个任务 →</a>
+            </article>
+        </div>
+    </section>
+</main>
 </body>
 </html>
